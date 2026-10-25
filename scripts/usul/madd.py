@@ -82,7 +82,7 @@ def munfasil(key, w, nxt):
 # ---------- البدل ----------
 BADAL_SKIP = ("إسراءيل", "إسرائيل", "يؤاخذ", "تؤاخذ", "الصابئين", "والصابئين")
 FARSH_BADAL = {("2:61", "النبيين"), ("2:177", "والنبيين"), ("2:213", "النبيين"), ("2:136", "النبيون"),
-               ("2:91", "أنبياء"), ("2:81", "خطيئته")}
+               ("2:81", "خطيئته")}
 
 def badal(w):
     b = bare(w)
@@ -94,6 +94,7 @@ def badal(w):
             # hamza after a sound sakin in the same word (القرآن، مسئولا) — but the lam of ال (الآخرة) is naql, not excluded
             if not (L[j - 1][0] == "ل" and j >= 2 and L[j - 2][0] in "اٱ"): continue
         nx, nm = L[j + 1]
+        if j + 2 < len(L) and L[j + 2][0] in HAMZAS: continue   # a hamza after the madd letter makes it muttasil, the stronger madd (رِئَاءَ)
         if not m and (nx not in "اىوي" or has_vowel(nm)):            # الْأخِرَةِ، الْأيَاتِ، لِأدَمَ = hamza + alif (ءا) dropped in this text
             return True
         if FATHA in m and not has_tanwin(m) and nx in "اى" and SUKUN not in nm and not has_tanwin(nm):

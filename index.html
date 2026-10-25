@@ -486,6 +486,8 @@ function markAttr(key,wi){
     if(lab&&(e.also||e.w2!=null||/\s/.test(lab.replace(/\s*\(.*?\)/g,"")))){const word=(st.ayahWords[key]||[])[wi];const sk=skel(word);
       const toks=d.r.map(r=>(r.w||"").replace(/\(.*?\)/g,"").split(/\s+/)).flat().filter(Boolean);
       const t=toks.find(t=>skel(t)===sk)||toks.find(t=>skel(t).slice(0,3)===sk.slice(0,3))||toks.find(t=>sk.length>2&&skel(t).slice(-3)===sk.slice(-3));lab=t||(wi===e.w?lab:"")}
+    // a reading written with a sakin mim (عَلَيْهُمْ) takes the damma of the Hafs word when a sakin follows (عَلَيْهُمُ الْقِتَالُ)
+    {const hw=(st.ayahWords[key]||[])[wi]||"";if(lab&&/مْ$/.test(lab)&&/مُ$/.test(hw))lab=lab.replace(/مْ$/,"مُ")}
     return lab?` data-m="${esc(lab)}"`:""}
   const labs=[...new Set(usulFor(key).filter(([,i])=>i===wi).map(uLabel).filter(Boolean))];
   if(labs.length)return ` data-m="${esc(labs.join(" · "))}" data-mu="1"`;
