@@ -10,7 +10,7 @@ from collections import defaultdict
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, "data", "raw")
 OUT_S = os.path.join(ROOT, "data", "s")
-FIELDS = ["bayt_no", "bayt_to", "bayt", "cue", "also", "all", "readings", "ramz", "ma3na", "tawjih", "wafi_loc", "kashf_loc", "kashf_text", "rz", "note"]
+FIELDS = ["bayt_no", "bayt_to", "bayt_nos", "bayt", "cue", "also", "all", "readings", "ramz", "ma3na", "tawjih", "wafi_loc", "kashf_loc", "kashf_text", "rz", "note"]
 
 def load_raw():
     rows = []
@@ -31,13 +31,13 @@ def main():
     vf = os.path.join(RAW, "matn_vocalized.json")
     voc = json.load(open(vf, encoding="utf-8")) if os.path.exists(vf) else {}
     for r in rows:
-        nos = range(r["bayt_no"], (r.get("bayt_to") or r["bayt_no"]) + 1)
+        nos = r.get("bayt_nos") or range(r["bayt_no"], (r.get("bayt_to") or r["bayt_no"]) + 1)
         if voc and all(str(n) in voc for n in nos):
             r["bayt"] = "\n".join(voc[str(n)] for n in nos)
     by_surah = defaultdict(lambda: defaultdict(list))
     bayts, problems = set(), []
     for r in rows:
-        bayts.update(range(r.get("bayt_no") or 0, (r.get("bayt_to") or r.get("bayt_no") or 0) + 1))
+        bayts.update(r.get("bayt_nos") or range(r.get("bayt_no") or 0, (r.get("bayt_to") or r.get("bayt_no") or 0) + 1))
         if not r.get("bayt"): problems.append(f"{r['_src']} bayt {r.get('bayt_no')}: no bayt text")
         for k in r.get("keys") or []:
             if not re.fullmatch(r"\d+:\d+", k): problems.append(f"{r['_src']} bad key {k}"); continue

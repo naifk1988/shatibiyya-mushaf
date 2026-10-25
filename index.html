@@ -628,8 +628,10 @@ function openAyah(key,sel){
 // one bayt shown as a two-hemistich verse, the way the matn is printed
 // the ramz words of the bayt are coloured; tapping one names the readers it stands for
 function baytHTML(t,rz){
-  const M=new Map();(rz||[]).forEach(z=>{const k=norm(z.t).replace(/ /g,"");if(k&&!M.has(k))M.set(k,z)});
-  const half=s=>s.split(/\s+/).filter(Boolean).map(tok=>{const z=M.get(norm(tok).replace(/ /g,""));
+  // key each ramz by its first word (two-word names like «لابن ذكوان»); a token may carry a joined و/ف (وَحَقٌّ)
+  const M=new Map();(rz||[]).forEach(z=>{const k=norm(z.t).split(" ")[0];if(k&&!M.has(k))M.set(k,z)});
+  const look=tok=>{const n=norm(tok).replace(/ /g,"");return M.get(n)||(/^[وف]/.test(n)?M.get(n.slice(1)):null)};
+  const half=s=>s.split(/\s+/).filter(Boolean).map(tok=>{const z=look(tok);
     return z?`<button class="rzw${z.l?"":" sarih"}" data-l="${esc(z.l||"")}" data-who="${esc(z.who)}">${esc(tok)}</button>`:esc(tok)}).join(" ");
   return `<div class="bayts">${String(t||"").split(/\n+/).map(b=>{const parts=b.split(/\s*\.\.\.\s*|\s*…\s*/);
     return `<div class="bayt"><span>${half(parts[0])}</span>${parts.length>1?`<span>${half(parts.slice(1).join(" "))}</span>`:""}</div>`}).join("")}</div>`;
@@ -644,7 +646,7 @@ function reportURL(e,word){
 }
 function cardHTML(e,words,idx){
   const word=e.w>=0?(e.w2!=null?words.slice(e.w2,e.w+1).join(" "):[e.w,...(e.also?e.wa.filter(i=>i!==e.w):[])].map(i=>words[i]).join(" … ")):e.cue.replace(/[(（][^)）]*[)）]/g,"").trim();
-  let h=`<article class="wc" id="c${idx}" data-w="${e.w}"><div class="top"><span class="q">${esc(word)}</span><span class="bno">${e.bayt_to?`البيتان ${ar(e.bayt_no)}–${ar(e.bayt_to)}`:`البيت ${ar(e.bayt_no)}`}</span></div>`;
+  let h=`<article class="wc" id="c${idx}" data-w="${e.w}"><div class="top"><span class="q">${esc(word)}</span><span class="bno">${e.bayt_nos?`البيتان ${e.bayt_nos.map(ar).join(" و")}`:e.bayt_to?`البيتان ${ar(e.bayt_no)}–${ar(e.bayt_to)}`:`البيت ${ar(e.bayt_no)}`}</span></div>`;
   h+=baytHTML(e.bayt,e.rz);
   if(e.ramz)h+=`<p class="ramz">${esc(e.ramz)}</p>`;
   if(e.readings&&e.readings.length){h+=`<div class="rd">`;

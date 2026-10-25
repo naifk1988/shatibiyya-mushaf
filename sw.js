@@ -1,5 +1,5 @@
 // Offline cache: app shell + data (network-first), mushaf pages and fonts (cache-first once fetched).
-const SHELL = "shatibi-shell-v1", RUNTIME = "shatibi-runtime-v1";
+const SHELL = "shatibi-shell-v2", RUNTIME = "shatibi-runtime-v1";
 const SHELL_FILES = ["./", "index.html", "manifest.webmanifest", "data/shatibiyya.json", "data/text_preview.json", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", e => {
