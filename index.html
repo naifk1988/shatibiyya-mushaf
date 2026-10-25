@@ -487,8 +487,8 @@ function markAttr(key,wi){
       const toks=d.r.map(r=>(r.w||"").replace(/\(.*?\)/g,"").split(/\s+/)).flat().filter(Boolean);
       const t=toks.find(t=>skel(t)===sk)||toks.find(t=>skel(t).slice(0,3)===sk.slice(0,3))||toks.find(t=>sk.length>2&&skel(t).slice(-3)===sk.slice(-3));lab=t||(wi===e.w?lab:"")}
     return lab?` data-m="${esc(lab)}"`:""}
-  const u=usulFor(key).find(([,i])=>i===wi);
-  if(u)return ` data-m="${esc(uLabel(u))}" data-mu="1"`;
+  const labs=[...new Set(usulFor(key).filter(([,i])=>i===wi).map(uLabel).filter(Boolean))];
+  if(labs.length)return ` data-m="${esc(labs.join(" · "))}" data-mu="1"`;
   return "";
 }
 function computeWordIdx(key,words){
