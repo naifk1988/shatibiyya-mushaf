@@ -20,8 +20,13 @@ def final_sakin(key, i):
     L = letters(hafs_word(key, i))
     return bool(L) and SUKUN in L[-1][1]
 
+# farsh makes a nun sakina meet a ya for Hamza: «وَمَن يَطَّوَّعْ» (2:158)، «فَمَن يَطَّوَّعْ» (2:184), bayt 489
+NUN_FARSH = {("2:158", "ومن"), ("2:184", "فمن")}
+
 def detect(vw):
     out = []
+    for key, words, i, nxt, _ in words_iter(vw):
+        if (key, bare(words[i])) in NUN_FARSH and nxt and bare(nxt) == "تطوع": out.append((key, ["nun_sakina", i, "farsh"]))
     for key, words, i, nxt, nxc in words_iter(vw):
         w, b = words[i], bare(words[i])
         n1 = bare(nxt)[:1] if nxt else ""
