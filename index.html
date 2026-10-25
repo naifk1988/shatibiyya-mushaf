@@ -248,7 +248,11 @@ body[data-hdr="4"] .shead .fr::before{content:"\FAFD"}body[data-hdr="4"] .shead 
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--khilaf:#ff8a7a}}
 :root[data-theme="dark"]{--khilaf:#ff8a7a}
 body.marks .w.has{color:var(--khilaf)}
-body.marks .w.has::after{display:none}
+body.marks .w.has:not([data-m])::after{display:none}
+body.marks .w[data-m]::after{content:attr(data-m);position:absolute;left:50%;top:-.6em;transform:translateX(-50%);display:block;
+  font:600 .4em/1.25 "Amiri",serif;color:#fff;background:var(--khilaf);border-radius:.45em;padding:.1em .38em .16em;white-space:nowrap;
+  box-shadow:0 0 0 .1em var(--paper);z-index:3;opacity:1;width:auto;height:auto;margin:0;bottom:auto}
+body.marks .w[data-mu]::after{background:var(--ucol,var(--frame))}
 body.marks .w.has.hl{color:var(--khilaf)}
 table.rz{width:100%;border-collapse:collapse;font-size:14px}
 .rz th{font-size:12px;color:var(--ink-soft);font-weight:600;text-align:start;padding:4px 6px;border-bottom:1px solid var(--line)}
@@ -256,6 +260,44 @@ table.rz{width:100%;border-collapse:collapse;font-size:14px}
 .rz b,.rzl b{display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 4px;border-radius:7px;background:var(--cart-bg);color:var(--frame);font-family:var(--f-display);font-size:15px;margin-inline-end:4px}
 .rzl{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px}
 .rzl div{display:flex;align-items:center;gap:6px;font-size:13.5px;padding:4px 0}
+/* transmitter chooser */
+.chip-i small{font-size:10.5px;opacity:.8;margin-inline-start:2px}
+.rrow.mine{background:color-mix(in srgb,var(--khilaf) 9%,var(--paper-edge));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--khilaf) 45%,transparent)}
+.rrow .who i{display:block;font-style:normal;font-size:11px;color:var(--khilaf);font-weight:700;margin-top:2px}
+.rnote b{color:var(--khilaf)}
+/* ramz words inside the bayt */
+.rzw{font:inherit;color:#2c6fa3;border-bottom:1.5px solid color-mix(in srgb,#2c6fa3 45%,transparent);padding:0;border-radius:0;line-height:inherit}
+.rzw.sarih{color:var(--frame);border-bottom-style:dotted}
+:root[data-theme="dark"] .rzw{color:#7db8e8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .rzw{color:#7db8e8}}
+/* full text, report link */
+details.full{margin-top:12px;border:1px solid var(--line);border-radius:10px;background:var(--paper-edge)}
+details.full summary{cursor:pointer;padding:8px 12px;font-size:13px;font-weight:600;color:var(--frame)}
+details.full p{margin:0;padding:2px 12px 12px;font-family:"Amiri",serif;font-size:16px;line-height:1.85}
+a.rep{display:inline-block;margin-top:10px;font-size:12px;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px}
+/* usul layer: a coloured line under the word */
+.u-mim{--ucol:#2c6fa3}.u-idgham{--ucol:#7a3e9d}.u-naql{--ucol:#b06a12}.u-imala{--ucol:#1f7a5a}
+body.usul .w.u{box-shadow:inset 0 -.1em 0 var(--ucol)}
+.ubar{width:6px;align-self:stretch;border-radius:3px;background:var(--ucol);flex:none}
+.sech{font-size:13px;color:var(--ink-soft);margin:18px 2px 8px;font-weight:700}
+.wc.uc{border-inline-start:4px solid var(--ucol)}
+.wc.uc .bno{color:var(--ucol);border-color:color-mix(in srgb,var(--ucol) 45%,transparent)}
+.tayah .aw.has{color:var(--khilaf)}
+/* memorization mode */
+.qtypes{display:flex;gap:6px;overflow-x:auto;padding:4px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));background:var(--sheet);border-bottom:1px solid var(--line)}
+.qt{flex:none;padding:6px 14px;border-radius:999px;border:1px solid var(--line);font-size:14px;background:var(--paper-edge)}
+.qt.on{background:var(--frame);color:#fff;border-color:var(--frame)}
+.quiz{padding-top:8px}
+.qsub{font-size:13px;color:var(--ink-soft);margin:0 2px 4px}
+.qq{font-size:18px;font-weight:600;line-height:1.7;margin:0 2px 14px}
+.qq.verse,.qo.verse{font-family:"Amiri",serif;font-weight:400;font-size:19px}
+.qopts{display:flex;flex-direction:column;gap:8px}
+.qo{text-align:start;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--sheet);font-size:15px;line-height:1.7}
+.qo.right{border-color:var(--tam);background:color-mix(in srgb,var(--tam) 12%,var(--sheet))}
+.qo.wrong{border-color:var(--neg);background:color-mix(in srgb,var(--neg) 12%,var(--sheet))}
+.qo.dim{opacity:.55}
+.qafter{margin-top:16px}
+.qnext{display:block;width:100%;margin:6px 0 10px;padding:13px;border-radius:12px;background:var(--frame);color:#fff;font-size:16px;font-weight:600}
 </style>
 
 <div id="app">
@@ -267,9 +309,12 @@ table.rz{width:100%;border-collapse:collapse;font-size:14px}
   <div class="title"><span class="sname" id="hdrName">…</span><span class="meta" id="hdrMeta"></span></div>
   <button class="ibtn" id="btnTheme" aria-label="الوضع الليلي" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button>
   <button class="ibtn" id="btnMarks" aria-label="إظهار مواضع الخلاف" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/></svg></button>
+  <button class="ibtn" id="btnUsul" aria-label="طبقة الأصول"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></button>
+  <button class="ibtn" id="btnQuiz" aria-label="وضع الحفظ والمراجعة"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5"/><path d="M22 9v6"/></svg></button>
   <button class="ibtn" id="btnSave" aria-label="حفظ علامة على هذه الصفحة" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg></button>
 </header>
 <nav class="fbar bot" aria-label="التنقل بين الصفحات">
+  <div class="chips" id="rawis" role="group" aria-label="اختر الراوي"></div>
   <input type="range" id="pgRange" min="1" max="604" step="1" aria-label="الانتقال إلى صفحة">
   <div class="row">
     <button class="ibtn" id="prev" aria-label="الصفحة السابقة"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
@@ -280,6 +325,7 @@ table.rz{width:100%;border-collapse:collapse;font-size:14px}
   </div>
 </nav>
 <div class="toast" id="toast" role="status"></div>
+<button class="onlyTag" id="onlyTag" aria-label="الراوي المختار"></button>
 <div class="scrim" id="scrim"></div>
 <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle">
   <div class="grip"></div>
@@ -337,7 +383,10 @@ function alignSuffix(toks,words,nth){
 
 /* ---------- state ---------- */
 const D=window.SHATIBI_DATA||null; let DATA=D;
-const st={page:Math.min(604,Math.max(1,store.get("page",1))),mode:window.FORCE_PREVIEW?"preview":null,pages:{},ayahWords:{},marks:store.get("marks",true)};
+const st={page:Math.min(604,Math.max(1,store.get("page",1))),mode:window.FORCE_PREVIEW?"preview":null,pages:{},ayahWords:{},marks:store.get("marks",true),
+  rawi:store.get("rawi",null),usul:new Set(store.get("usul",[]))};
+const RAWI=[["qalun","قالون"],["warsh","ورش"],["bazzi","البزي"],["qunbul","قنبل"],["duri_a","الدوري","عن أبي عمرو"],["susi","السوسي"],["hisham","هشام"],["ibn_dhakwan","ابن ذكوان"],["shuba","شعبة"],["hafs","حفص"],["khalaf","خلف"],["khallad","خلاد"],["abulharith","أبو الحارث"],["duri_k","الدوري","عن الكسائي"]];
+const rawiName=id=>{const r=RAWI.find(x=>x[0]===id);return r?r[1]+(r[2]?" "+r[2]:""):id};
 let preview=window.TEXT_PREVIEW||null;
 
 async function loadData(){
@@ -346,7 +395,11 @@ async function loadData(){
   if(!preview){try{preview=await (await fetch("data/text_preview.json")).json()}catch(e){preview=null}}
 }
 // per-surah entry files (data/s/N.json), fetched only when a page of that surah is shown
-const loadedS={};
+const loadedS={},loadedU={};let USUL=null;const UENT={};
+async function ensureUsul(list){
+  if(!USUL){try{USUL=await (await fetch("data/usul_rules.json")).json()}catch(e){USUL={}}}
+  await Promise.all(list.filter(s=>!loadedU[s]).map(s=>loadedU[s]=fetch(`data/u/${s}.json`).then(r=>r.ok?r.json():{}).then(part=>Object.assign(UENT,part)).catch(()=>{delete loadedU[s]})));
+}
 async function ensureSurahs(list){
   if(!DATA||!DATA.split)return;
   await Promise.all(list.filter(s=>!loadedS[s]).map(s=>loadedS[s]=fetch(`data/s/${s}.json`).then(r=>r.ok?r.json():{}).then(part=>Object.assign(DATA.entries,part)).catch(()=>{delete loadedS[s]})));
@@ -388,8 +441,37 @@ function setHeader(p,surahs,juz){
 }
 // a word carries a khilaf when one of its ayah's Shatibiyya cards points at it; a cue spanning two words marks both
 const covers=(e,i)=>e.w===i||(e.w2!=null&&i>=e.w2&&i<=e.w)||(e.wa&&e.wa.includes(i));
-function hasEntries(key,wi){return entriesFor(key).some(e=>covers(e,wi))}
-function markAttr(){return ""}
+// with a transmitter chosen, a card counts only where his reading differs from Hafs's
+function rawiDiff(e){
+  if(!st.rawi||!e.readings)return null;
+  const R=e.readings.filter(r=>r.q&&r.q.includes(st.rawi));if(!R.length)return null;
+  const H=e.readings.filter(r=>r.q&&r.q.includes("hafs"));const other=R.filter(r=>!H.includes(r));
+  if(!other.length)return null;
+  return {label:other.map(r=>r.w||"").filter(Boolean).join(" / ")+(R.length>other.length?" (بخلف)":""),r:other};
+}
+const cardOn=e=>!st.rawi||!!rawiDiff(e);
+// usul occurrences for an ayah: [[ruleId, wordIndex], ...], limited to the layers switched on and to the chosen transmitter
+function usulFor(key){
+  if(!st.usul.size||!USUL)return [];
+  return (UENT[key]||[]).filter(([r])=>st.usul.has(r)&&USUL[r]&&(!st.rawi||rawiUsul(r)));
+}
+function rawiUsul(r){const v=USUL[r]&&USUL[r].q&&USUL[r].q[st.rawi];return v&&v!=="no"?v:null}
+const USUL_SIGN={mim:"صلة",idgham:"إدغام",naql:"نقل",imala:"إمالة"};
+function hasEntries(key,wi){return entriesFor(key).some(e=>covers(e,wi)&&cardOn(e))}
+function wordClass(key,wi){
+  let c=hasEntries(key,wi)?" has":"";
+  const u=usulFor(key).filter(([,i])=>i===wi).map(([r])=>r);
+  if(u.length)c+=` u u-${u[0]}`;
+  return c;
+}
+function markAttr(key,wi){
+  if(!st.rawi)return "";
+  const e=entriesFor(key).find(e=>covers(e,wi)&&rawiDiff(e));
+  if(e){const d=rawiDiff(e);return d.label?` data-m="${esc(d.label)}"`:""}
+  const u=usulFor(key).find(([,i])=>i===wi);
+  if(u){const v=rawiUsul(u[0]);return ` data-m="${v==="taqlil"?"تقليل":USUL_SIGN[u[0]]||""}${v==="both"?" (بخلف)":""}" data-mu="1"`}
+  return "";
+}
 function computeWordIdx(key,words){
   // attach a word index to each entry for this ayah, using the words currently shown
   (DATA.entries[key]||[]).forEach(e=>{if(e._k!==words.length){e.w=alignCue(e.cue,words,"waqf");
@@ -403,7 +485,7 @@ async function render(){
   const stage=$("#stage");clearTimeout(st.loadT);st.loadT=setTimeout(()=>{if(st.page===p){stage.innerHTML='<div class="loading">جارٍ تحميل الصفحة…</div>';st.slideFrom=0}},350);
   if(st.mode!=="preview"){
     try{const pg=await fetchLivePage(p);st.mode="live";
-      await ensureSurahs([...new Set(Object.keys(pg.d.vw).map(k=>+k.split(":")[0]))]);
+      {const ss=[...new Set(Object.keys(pg.d.vw).map(k=>+k.split(":")[0]))];await Promise.all([ensureSurahs(ss),ensureUsul(ss)]);}
       if(p!==st.page)return;clearTimeout(st.loadT);renderLive(pg,p);slideIn();prefetch(p);return}
     catch(e){st.mode="preview"}
   }
@@ -443,8 +525,8 @@ function pageHTML(pg,p){
     row.forEach(it=>{const [t,ch,key,pos]=it;const f=fo(it);const sty=f!=null?` style="font-family:q4f${f}"`:"";
       if(t==="q"){html+=`<span class="qtr"${sty}>${ch}</span>`;return}
       if(t==="e"){html+=`<span class="w end" data-k="${key}" data-i="-1"${sty}>${ch}</span>`;return}
-      const wi=pos-1;const ma=markAttr(key,wi);const st2=ma&&f!=null?ma.replace('style="','style="font-family:q4f'+f+';'):(ma||sty);
-      html+=`<span class="w${hasEntries(key,wi)?" has":""}" data-k="${key}" data-i="${wi}"${ma?st2:sty}>${ch}</span>`;
+      const wi=pos-1;
+      html+=`<span class="w${wordClass(key,wi)}" data-k="${key}" data-i="${wi}"${sty}${markAttr(key,wi)}>${ch}</span>`;
     });
     html+=`</div>`;
   });
@@ -490,7 +572,7 @@ function renderPreview(p){
     if(!surahs.includes(+s))surahs.push(+s);
     if(v.a===1)html+=`</div>${sheadHTML(+s)}${s!=="1"&&s!=="9"?'<div class="line basm" style="font-size:22px">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>':""}<div class="flow">`;
     const key=s+":"+v.a;const words=v.t.split(/\s+/).filter(Boolean);st.ayahWords[key]=words;computeWordIdx(key,words);
-    words.forEach((w,i)=>{html+=`<span class="w${hasEntries(key,i)?" has":""}" data-k="${key}" data-i="${i}"${markAttr(key,i)}>${esc(w)}</span> `});
+    words.forEach((w,i)=>{html+=`<span class="w${wordClass(key,i)}" data-k="${key}" data-i="${i}"${markAttr(key,i)}>${esc(w)}</span> `});
     html+=`<span class="num w end" data-k="${key}" data-i="-1">﴿${ar(v.a)}﴾</span> `;});}
   html+=`</div><div class="pfoot"><span>${ar(p)}</span></div></div>`;
   if(!any){stage.innerHTML=`<div class="notice">هذه الصفحة غير متاحة في وضع المعاينة (المتاح حين يُضاف نص السورة). افتح التطبيق المنشور لعرض المصحف كاملًا.</div>`;setHeader(p,[],null);return}
@@ -514,46 +596,76 @@ let sheetState=null;
 function openAyah(key,sel){
   const [s,a]=key.split(":").map(Number);
   const words=st.ayahWords[key]||[];computeWordIdx(key,words);
-  const cards=entriesFor(key).slice().sort((x,y)=>(x.w<0?999:x.w)-(y.w<0?999:y.w)||x.bayt_no-y.bayt_no);
-  sheetState={key,words,cards,s,a,sel};
+  const cards=entriesFor(key).filter(cardOn).sort((x,y)=>(x.w<0?999:x.w)-(y.w<0?999:y.w)||x.bayt_no-y.bayt_no);
+  const usul=usulFor(key);
+  sheetState={key,words,cards,usul,s,a,sel};
   drawSheet();openSheet();
 }
 // one bayt shown as a two-hemistich verse, the way the matn is printed
-function baytHTML(t){
+// the ramz words of the bayt are coloured; tapping one names the readers it stands for
+function baytHTML(t,rz){
+  const M=new Map();(rz||[]).forEach(z=>{const k=norm(z.t).replace(/ /g,"");if(k&&!M.has(k))M.set(k,z)});
+  const half=s=>s.split(/\s+/).filter(Boolean).map(tok=>{const z=M.get(norm(tok).replace(/ /g,""));
+    return z?`<button class="rzw${z.l?"":" sarih"}" data-l="${esc(z.l||"")}" data-who="${esc(z.who)}">${esc(tok)}</button>`:esc(tok)}).join(" ");
   return `<div class="bayts">${String(t||"").split(/\n+/).map(b=>{const parts=b.split(/\s*\.\.\.\s*|\s*…\s*/);
-    return `<div class="bayt"><span>${esc(parts[0])}</span>${parts.length>1?`<span>${esc(parts.slice(1).join(" "))}</span>`:""}</div>`}).join("")}</div>`;
+    return `<div class="bayt"><span>${half(parts[0])}</span>${parts.length>1?`<span>${half(parts.slice(1).join(" "))}</span>`:""}</div>`}).join("")}</div>`;
+}
+document.addEventListener("click",e=>{const b=e.target.closest(".rzw");if(!b)return;e.stopPropagation();
+  toast(b.dataset.l?`«${b.dataset.l}» رمزٌ لـ ${b.dataset.who}`:`تصريح باسم ${b.dataset.who}`)});
+const REPO="https://github.com/naifk1988/shatibiyya-mushaf";
+function reportURL(e,word){
+  const [s,a]=(e.key||sheetState.key).split(":").map(Number);const title=`خطأ: ${SURAHS[s-1]} ${a} — «${word}» (البيت ${e.bayt_no})`;
+  const body=`السورة: ${SURAHS[s-1]}\nالآية: ${a}\nالكلمة: ${word}\nالبيت: ${e.bayt_no}\n\nما الخطأ؟\n\nالصواب ومصدره:\n`;
+  return `${REPO}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
 }
 function cardHTML(e,words,idx){
   const word=e.w>=0?(e.w2!=null?words.slice(e.w2,e.w+1).join(" "):[e.w,...(e.also?e.wa.filter(i=>i!==e.w):[])].map(i=>words[i]).join(" … ")):e.cue.replace(/[(（][^)）]*[)）]/g,"").trim();
   let h=`<article class="wc" id="c${idx}" data-w="${e.w}"><div class="top"><span class="q">${esc(word)}</span><span class="bno">${e.bayt_to?`البيتان ${ar(e.bayt_no)}–${ar(e.bayt_to)}`:`البيت ${ar(e.bayt_no)}`}</span></div>`;
-  h+=baytHTML(e.bayt);
+  h+=baytHTML(e.bayt,e.rz);
   if(e.ramz)h+=`<p class="ramz">${esc(e.ramz)}</p>`;
   if(e.readings&&e.readings.length){h+=`<div class="rd">`;
-    e.readings.forEach(r=>{const hafs=/حفص|الباقون/.test(r.who||"")&&/حفص/.test(r.who||"");
-      h+=`<div class="rrow${hafs?" hafs":""}"><span class="who">${esc(r.who)}</span><span class="rr">${esc(r.r)}</span></div>`});
+    e.readings.forEach(r=>{const hafs=r.q?r.q.includes("hafs"):/حفص/.test(r.who||"");const mine=st.rawi&&r.q&&r.q.includes(st.rawi);
+      h+=`<div class="rrow${hafs?" hafs":""}${mine?" mine":""}"><span class="who">${esc(r.who)}${mine?`<i>${esc(rawiName(st.rawi))}</i>`:""}</span><span class="rr">${esc(r.r)}</span></div>`});
     h+=`</div>`}
   if(e.all)h+=`<p class="allnote">حكمٌ مطّرد: يشمل الكلمة حيث وقعت في القرآن.</p>`;
   if(e.ma3na)h+=`<h3 class="lbl">المعنى</h3><p class="txt">${esc(e.ma3na)}</p>`;
   if(e.tawjih)h+=`<h3 class="lbl">التوجيه</h3><p class="txt">${esc(e.tawjih)}</p>`;
   const src=[];if(e.wafi_loc)src.push(`الوافي للقاضي ${arLoc(e.wafi_loc)}`);if(e.kashf_loc)src.push(`الكشف لمكي ${arLoc(e.kashf_loc)}`);
+  if(e.kashf_text)h+=`<details class="full"><summary>نص مكي في «الكشف» بحروفه</summary><p>${esc(e.kashf_text)}</p></details>`;
   if(src.length)h+=`<div class="src">${esc(src.join(" · "))}</div>`;
-  if(e.w<0)h+=`<div class="ex">لم تُحدَّد الكلمة في رسم المصحف</div>`;
+  if(e.w===-1)h+=`<div class="ex">لم تُحدَّد الكلمة في رسم المصحف</div>`;
+  h+=`<a class="rep" href="${reportURL(e,word)}" target="_blank" rel="noopener">إبلاغ عن خطأ في هذه البطاقة</a>`;
   return h+`</article>`;
 }
 const arLoc=s=>ar(String(s||""));
 function drawSheet(){
   const {words,cards,s:sn,a,sel}=sheetState;
   $("#shTitle").innerHTML=`<small>القراءات السبع من طريق الشاطبية</small><span>سورة ${SURAHS[sn-1]} · الآية ${ar(a)}</span>`;
-  const marked=new Set();words.forEach((w,i)=>{if(cards.some(e=>covers(e,i)))marked.add(i)});
+  const {usul}=sheetState;const marked=new Set();words.forEach((w,i)=>{if(cards.some(e=>covers(e,i))||usul.some(([,j])=>j===i))marked.add(i)});
   $("#shTop").innerHTML=`<div class="tayah">${words.map((w,i)=>`<span class="aw${marked.has(i)?" has":""}${i===sel?" sel":""}" data-i="${i}">${esc(w)}</span>`).join(" ")} <span class="an">﴿${ar(a)}﴾</span></div>`;
   let h="";
-  if(!cards.length)h=`<div class="empty">لا خلاف بين القراء السبعة في فرش هذه الآية من طريق الشاطبية.${DATA.surahs_covered&&!DATA.surahs_covered.includes(sn)?"<br>(لم تُضَف هذه السورة بعد)":""}</div>`;
-  else{h=`<p class="tnote">${ar(cards.length)} ${cards.length===1?"موضع":"مواضع"} خلاف في الآية — اضغط كلمة لتنتقل إلى بيتها.</p>`;cards.forEach((e,i)=>h+=cardHTML(e,words,i))}
+  if(st.rawi)h+=`<p class="tnote rnote">المعروض: ما يخالف فيه <b>${esc(rawiName(st.rawi))}</b> حفصًا.</p>`;
+  if(!cards.length&&!usul.length)h+=`<div class="empty">${st.rawi?`لا يخالف ${esc(rawiName(st.rawi))} حفصًا في فرش هذه الآية.`:"لا خلاف بين القراء السبعة في فرش هذه الآية من طريق الشاطبية."}${DATA.surahs_covered&&!DATA.surahs_covered.includes(sn)?"<br>(لم تُضَف هذه السورة بعد)":""}</div>`;
+  else if(cards.length){h+=`<p class="tnote">${ar(cards.length)} ${cards.length===1?"موضع":"مواضع"} خلاف في الفرش — اضغط كلمة لتنتقل إلى بيتها.</p>`;cards.forEach((e,i)=>h+=cardHTML(e,words,i))}
+  if(usul.length)h+=usulSection(usul,words);
   $("#shBody").innerHTML=h;$("#shBody").scrollTop=0;
   if(sel>=0)requestAnimationFrame(()=>scrollToWord(sel));
 }
+function usulSection(usul,words){
+  const by={};usul.forEach(([r,i])=>(by[r]=by[r]||[]).push(i));
+  let h=`<h3 class="sech">من الأصول</h3>`;
+  Object.keys(by).forEach(r=>{const R=USUL[r];if(!R)return;
+    h+=`<article class="wc uc u-${r}" data-rule="${r}"><div class="top"><span class="q">${by[r].map(i=>esc(words[i])).join(" · ")}</span><span class="bno">${esc(R.title)}</span></div>`;
+    h+=baytHTML((R.bayts||[]).map(b=>b.text).join("\n"),R.rz);
+    (R.readers||[]).length&&(h+=`<div class="rd">${R.readers.map(x=>`<div class="rrow"><span class="who">${esc(x.who)}</span><span class="rr">${esc(x.r)}</span></div>`).join("")}</div>`);
+    if(R.ma3na)h+=`<h3 class="lbl">المعنى</h3><p class="txt">${esc(R.ma3na)}</p>`;
+    if(R.exceptions&&R.exceptions.length)h+=`<details class="full"><summary>المستثنى من القاعدة</summary><p>${R.exceptions.map(esc).join("<br>")}</p></details>`;
+    h+=`<div class="src">${esc("الوافي للقاضي "+arLoc(R.wafi_loc||""))}${R.bayts&&R.bayts.length?` · البيت ${ar(R.bayts[0].no)}${R.bayts.length>1?"–"+ar(R.bayts[R.bayts.length-1].no):""}`:""}</div>`;
+    h+=`<p class="ex">حُصرت مواضع هذه القاعدة في الآية آليًّا بحسب شروطها، فإن رأيت خطأً فأبلغ عنه.</p></article>`});
+  return h;
+}
 function scrollToWord(i){
-  const c=[...$("#shBody").querySelectorAll(".wc")].find(x=>{const e=sheetState.cards[+x.id.slice(1)];return e&&covers(e,i)});
+  const c=[...$("#shBody").querySelectorAll(".wc")].find(x=>{if(x.dataset.rule)return sheetState.usul.some(([r,j])=>r===x.dataset.rule&&j===i);const e=sheetState.cards[+x.id.slice(1)];return e&&covers(e,i)});
   $("#shTop").querySelectorAll(".aw").forEach(x=>x.classList.toggle("sel",+x.dataset.i===i));
   if(c){$("#shBody").scrollTop=c.offsetTop-$("#shBody").offsetTop-6;c.classList.remove("flash");void c.offsetWidth;c.classList.add("flash")}
 }
@@ -613,7 +725,80 @@ $("#btnTheme").onclick=()=>{const dark=$("#btnTheme").getAttribute("aria-pressed
 applyTheme(store.get("theme",null));
 document.body.dataset.hdr="1"; // chosen style: gold cartouche (styles 2–4 kept in the CSS)
 $("#btnMarks").onclick=()=>{st.marks=!st.marks;store.set("marks",st.marks);applyMarks();toast(st.marks?"تُلوَّن كل كلمة فيها خلاف":"أُخفي تلوين الخلاف")};
-function applyMarks(){document.body.classList.toggle("marks",st.marks);$("#btnMarks").setAttribute("aria-pressed",st.marks)}
+function applyMarks(){document.body.classList.toggle("marks",st.marks||!!st.rawi);document.body.classList.toggle("usul",st.usul.size>0);
+  $("#btnMarks").setAttribute("aria-pressed",st.marks||!!st.rawi);$("#btnUsul").setAttribute("aria-pressed",st.usul.size>0)}
+function rerender(){const s=$("#stage");const top=s.scrollTop;st.slideFrom=0;render().then(()=>{s.scrollTop=top})}
+
+/* ---------- transmitter chooser: "الكل" shows every khilaf; one transmitter shows only where he differs from Hafs, with his word above it ---------- */
+function drawRawis(){
+  $("#rawis").innerHTML=`<button class="chip-i" data-id="" aria-pressed="${!st.rawi}"><i>✦</i>كل الخلاف</button>`+
+    RAWI.filter(r=>r[0]!=="hafs").map(r=>`<button class="chip-i" data-id="${r[0]}" aria-pressed="${st.rawi===r[0]}">${esc(r[1])}${r[2]?`<small>${esc(r[2].replace("عن ",""))}</small>`:""}</button>`).join("");
+  $("#rawis").querySelectorAll(".chip-i").forEach(c=>c.onclick=()=>chooseRawi(c.dataset.id||null));
+  $("#onlyTag").textContent=st.rawi?`برواية ${rawiName(st.rawi)}`:"";
+}
+function chooseRawi(id){
+  st.rawi=id;store.set("rawi",id);applyMarks();drawRawis();toggleChrome(true);rerender();
+  toast(id?`تظهر مواضع مخالفة ${rawiName(id)} لحفص، وقراءته فوق الكلمة`:"تظهر مواضع الخلاف كلها");
+}
+$("#onlyTag").onclick=()=>toggleChrome(true);
+
+/* ---------- usul layers ---------- */
+$("#btnUsul").onclick=async()=>{
+  await ensureUsul([1,2]);
+  const ids=Object.keys(USUL||{});
+  let h=`<div class="panel"><p class="small">الأصول قواعد مطّردة تمسّ كلمات كثيرة، فهي طبقات تُظهرها عند الحاجة. تُعلَّم كلماتها بخط تحتها${st.rawi?`، ويُعرض منها ما يخص <b>${esc(rawiName(st.rawi))}</b> فقط`:""}، وتظهر قاعدتها في لوحة الآية.</p><div class="blist">`;
+  ids.forEach(r=>{const R=USUL[r];const n=Object.values(UENT).reduce((a,l)=>a+l.filter(x=>x[0]===r).length,0);
+    h+=`<label class="bitem"><span class="ubar u-${r}"></span><span class="bn"><b>${esc(R.title)}</b><span>${esc(R.short||"")}</span></span><span class="n">${ar(n)} موضع</span><input type="checkbox" class="sw" data-id="${r}"${st.usul.has(r)?" checked":""}></label>`});
+  h+=`</div><p class="small">تُحصر المواضع آليًّا بحسب شروط القاعدة ومستثنياتها كما في «الوافي»، في الفاتحة والبقرة.</p></div>`;
+  $("#shTop").innerHTML="";$("#shTitle").textContent="طبقة الأصول";$("#shBody").innerHTML=ids.length?h:`<div class="empty">لم تُضَف الأصول بعد.</div>`;openSheet();
+  $("#shBody").querySelectorAll(".sw").forEach(c=>c.onchange=()=>{c.checked?st.usul.add(c.dataset.id):st.usul.delete(c.dataset.id);store.set("usul",[...st.usul]);applyMarks();rerender()});
+};
+
+/* ---------- memorization mode ---------- */
+const QUIZ={type:"mix",n:0,ok:0,cur:null};
+function quizPool(){
+  const seen=new Set(),out=[];
+  Object.entries(DATA.entries).forEach(([k,list])=>list.forEach(e=>{const id=e.bayt_no+"|"+e.cue;if(seen.has(id))return;seen.add(id);out.push(Object.assign({key:k},e))}));
+  return out;
+}
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const hemis=e=>String(e.bayt||"").split(/\n+/)[0].split(/\s*\.\.\.\s*/);
+const keyName=k=>{const [s,a]=k.split(":").map(Number);return `${SURAHS[s-1]} ${ar(a)}`};
+function makeQ(pool){
+  const t=QUIZ.type==="mix"?pick(["who","bayt","complete"]):QUIZ.type;
+  for(let tries=0;tries<40;tries++){
+    const e=pick(pool);
+    if(t==="who"){const rs=(e.readings||[]).filter(r=>r.q&&r.q.length&&!r.q.includes("hafs")&&r.w);if(!rs.length)continue;const r=pick(rs);
+      const wrong=shuffle([...new Set(pool.flatMap(x=>(x.readings||[]).map(y=>y.who)).filter(w=>w&&w!==r.who&&!/حفص|الباقون/.test(w)))]).slice(0,3);if(wrong.length<3)continue;
+      return {t,e,q:`من قرأ «${r.w}» في ${keyName(e.key)}؟`,right:r.who,opts:shuffle([r.who,...wrong])}}
+    if(t==="bayt"){const near=pool.filter(x=>x.bayt_no!==e.bayt_no&&Math.abs(x.bayt_no-e.bayt_no)<=12);const wrong=shuffle([...new Set(near.map(x=>hemis(x)[0]))]).filter(x=>x!==hemis(e)[0]).slice(0,3);if(wrong.length<3)continue;
+      return {t,e,q:`في أي بيت حُكم «${e.cue.replace(/\(.*?\)/g,"").trim()}» (${keyName(e.key)})؟`,right:hemis(e)[0],opts:shuffle([hemis(e)[0],...wrong]),sub:"اختر صدر البيت"}}
+    if(t==="complete"){const hs=hemis(e);if(hs.length<2)continue;const wrong=shuffle([...new Set(pool.map(x=>hemis(x)[1]).filter(x=>x&&x!==hs[1]))]).slice(0,3);if(wrong.length<3)continue;
+      return {t,e,q:hs[0]+" …",right:hs[1],opts:shuffle([hs[1],...wrong]),sub:`أكمل البيت ${ar(e.bayt_no)}`,verse:true}}
+  }
+  return null;
+}
+async function openQuiz(){
+  await ensureSurahs([1,2]);const pool=quizPool();
+  if(pool.length<8){$("#shTop").innerHTML="";$("#shTitle").textContent="وضع الحفظ";$("#shBody").innerHTML=`<div class="empty">لا توجد بيانات كافية.</div>`;openSheet();return}
+  QUIZ.cur=makeQ(pool);QUIZ.pool=pool;drawQuiz();openSheet();
+}
+function drawQuiz(ans){
+  const Q=QUIZ.cur;$("#shTitle").innerHTML=`<small>وضع الحفظ والمراجعة</small><span>${ar(QUIZ.ok)} من ${ar(QUIZ.n)}</span>`;
+  const T=[["mix","خليط"],["who","من قرأ؟"],["bayt","في أي بيت؟"],["complete","أكمل البيت"]];
+  $("#shTop").innerHTML=`<div class="qtypes">${T.map(([k,l])=>`<button class="qt${QUIZ.type===k?" on":""}" data-t="${k}">${l}</button>`).join("")}</div>`;
+  if(!Q){$("#shBody").innerHTML=`<div class="empty">تعذّر توليد سؤال من هذا النوع.</div>`;return}
+  let h=`<div class="quiz">${Q.sub?`<p class="qsub">${esc(Q.sub)}</p>`:""}<p class="qq${Q.verse?" verse":""}">${esc(Q.q)}</p><div class="qopts">`;
+  Q.opts.forEach((o,i)=>{const cls=ans==null?"":o===Q.right?" right":i===ans?" wrong":" dim";h+=`<button class="qo${Q.t!=="who"?" verse":""}${cls}" data-i="${i}"${ans!=null?" disabled":""}>${esc(o)}</button>`});
+  h+=`</div>`;
+  if(ans!=null){h+=`<div class="qafter">${cardHTML(Object.assign({},Q.e,{w:-2}),[],"q")}</div><button class="qnext">السؤال التالي</button>`}
+  $("#shBody").innerHTML=h+`</div>`;
+  $("#shBody").querySelectorAll(".qo").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;QUIZ.n++;if(Q.opts[i]===Q.right)QUIZ.ok++;drawQuiz(i)});
+  const nx=$("#shBody").querySelector(".qnext");if(nx)nx.onclick=()=>{QUIZ.cur=makeQ(QUIZ.pool);drawQuiz();$("#shBody").scrollTop=0};
+}
+$("#shTop").addEventListener("click",e=>{const b=e.target.closest(".qt");if(!b)return;QUIZ.type=b.dataset.t;QUIZ.cur=makeQ(QUIZ.pool);drawQuiz()});
+$("#btnQuiz").onclick=openQuiz;
 
 $("#btnIndex").onclick=()=>{
   const cov=new Set(DATA.surahs_covered||[]);
@@ -641,7 +826,7 @@ $("#btnBooks").onclick=()=>{
 };
 window.addEventListener("resize",()=>{const l=$("#stage").querySelector(":scope>.page .lines");if(l){l.style.fontSize=pageFontSize()+"px";fitLines()}});
 
-loadData().then(()=>{applyMarks();render();toggleChrome(true);setTimeout(()=>toggleChrome(false),2500)});
+loadData().then(()=>{applyMarks();drawRawis();render();toggleChrome(true);setTimeout(()=>toggleChrome(false),2500)});
 if("serviceWorker" in navigator&&location.protocol==="https:"&&!window.SHATIBI_DATA){navigator.serviceWorker.register("sw.js").catch(()=>{})}
 })();
 </script>

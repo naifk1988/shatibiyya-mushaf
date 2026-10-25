@@ -10,7 +10,7 @@ from collections import defaultdict
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, "data", "raw")
 OUT_S = os.path.join(ROOT, "data", "s")
-FIELDS = ["bayt_no", "bayt_to", "bayt", "cue", "also", "all", "readings", "ramz", "ma3na", "tawjih", "wafi_loc", "kashf_loc", "note"]
+FIELDS = ["bayt_no", "bayt_to", "bayt", "cue", "also", "all", "readings", "ramz", "ma3na", "tawjih", "wafi_loc", "kashf_loc", "kashf_text", "rz", "note"]
 
 def load_raw():
     rows = []
