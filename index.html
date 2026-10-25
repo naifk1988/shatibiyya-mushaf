@@ -475,7 +475,7 @@ function uLabel([r,,f]){
   if(r==="imala")return "إمالة"+(f==="w"?" وقفًا":"");
   return "";
 }
-const UFLAG={h:"قبل همز القطع: ولورش أيضًا",x:"قبله ساكن صحيح: المأخوذ به الإخفاء (الاختلاس)",w:"وقفًا فقط: بعدها ساكن أو تنوين",k:"للكسائي وحده",dk:"للدوري عن الكسائي وحده"};
+const UFLAG={v:"عند وصل الآية بما بعدها",h:"قبل همز القطع: ولورش أيضًا",x:"قبله ساكن صحيح: المأخوذ به الإخفاء (الاختلاس)",w:"وقفًا فقط: بعدها ساكن أو تنوين",k:"للكسائي وحده",dk:"للدوري عن الكسائي وحده"};
 function hasEntries(key,wi){return entriesFor(key).some(e=>covers(e,wi)&&cardOn(e))}
 function wordClass(key,wi){
   let c=hasEntries(key,wi)?" has":"";

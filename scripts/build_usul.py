@@ -2,7 +2,7 @@
 """Find the places of four usul rules in al-Fatiha and al-Baqarah, from the words of the Madinah page data (data/q4),
 so that word indices match what the app shows. Conditions and exceptions follow data/usul_rules.json (from al-Wafi).
 Output: data/u/<surah>.json  {"s:a": [[rule, wordIndex, flag], ...]}
-  flags: mim  "h" = before hamzat qat' (Warsh too)          idgham "x" = sakin before the merged letter (ikhfa/ikhtilas)
+  flags: mim  "h" = before hamzat qat' (Warsh too)          idgham "x" = sakin before the merged letter (ikhfa/ikhtilas), "v" = across two ayahs (wasl only)
          imala "w" = only when pausing   "k" = al-Kisa'i only   "dk" = al-Duri 'an al-Kisa'i only
 Run: python3 scripts/build_usul.py            (add --list to print every place for review)"""
 import json, glob, os, re, sys
@@ -15,12 +15,13 @@ SUKUN, SHADDA = "ْ", "ّ"
 MARKS = re.compile(r"[ً-ٰٟۜ-ۭ]")
 HAMZA_START = "أإآء"
 
-def bare(w): return MARKS.sub("", w)
+def clean(w): return w.replace("\u200d", "").replace("\u0640", "")   # zero-width joiner and tatweel used in the page text
+def bare(w): return MARKS.sub("", clean(w))
 
 def letters(w):
     """[(letter, marks)] — marks are the diacritics written after the letter."""
     out = []
-    for ch in w:
+    for ch in clean(w):
         if MARKS.match(ch):
             if out: out[-1][1] += ch
         else:
@@ -50,7 +51,7 @@ def mim(words, i, nxt):
     L = letters(words[i])
     if not nxt or not L or L[-1][0] != "م" or (L[-1][1] and SUKUN not in L[-1][1]): return None   # sukun, or no mark (dropped before an assimilated letter)
     if not re.search(r"(هم|كم|تم)$", b): return None
-    if b in ("ثم", "لم", "أم", "يوم"): return None
+    if b in ("ثم", "لم", "أم", "يوم", "كم", "وكم", "فكم"): return None   # كم is the particle, not a plural mim
     if starts_wasl(nxt): return None
     return "h" if starts_hamza(nxt) else ""
 
@@ -64,6 +65,8 @@ def idgham(words, i, nxt):
     if not moving(marks): return None              # sakin, tanwin, shadda, madd letter, or tanwin dropped from the text
     b0 = bare(nxt)[:1]
     if a != b0: return None
+    # before ب this text writes tanwin as a single vowel (كَاتِبُ بِالْعَدْلِ = كاتبٌ): a damma/kasra on a word without ال may be tanwin
+    if a == "ب" and not bare(words[i]).startswith(("ال", "وال", "فال", "بال")) and ("\u064F" in marks or "\u0650" in marks): return None
     if a == "ت" and letters(words[i])[-1][0] == "ت": return None   # تاء المتكلم/المخاطب (كنتُ ترابا، أنتَ تكره)
     prev = L[-2] if len(L) >= 2 else None
     return "x" if prev and SUKUN in prev[1] and prev[0] not in "اوي" else ""
@@ -76,6 +79,8 @@ def naql_between(words, i, nxt):
     L = last_letter(words[i])
     if not L: return None
     a, marks = L[-1]
+    if a in "أإآءؤئ" and any(c in marks for c in TANWIN): return ""   # hamza carrying tanwin (وَأَدَاءٌ إِلَيْهِ)
+    if a == "ا" and len(L) >= 2 and "\u064B" in L[-2][1]: return ""   # fatha-tanwin written with alif (هُودًا أَوْ)
     if a in MADD or a in "أإآءؤئ": return None
     if any(c in marks for c in HARAKA) and not any(c in marks for c in TANWIN): return None   # a voweled letter (shadda or not)
     prev = L[-2][1] if len(L) >= 2 else ""
@@ -85,19 +90,19 @@ def naql_between(words, i, nxt):
     return ""
 
 def naql_inside(w):
-    return bool(re.match(r"^(و|ف|ب|ك)?(ال|لل)[أإآء]", bare(w)))
+    return bool(re.match(r"^[وف]?[بكل]?(ال|لل)[أإآءئؤ]", bare(w)))
 
 # ---------- 4. الإمالة الكبرى لحمزة والكسائي ----------
 NOT_IMALA = {"على", "إلى", "حتى", "لدى"}
 PREFIX = re.compile(r"^(و|ف)")
 # written with alif in this text, imala'd (from the rule card): base form → flag
-ALIF_WORDS = {"الدنيا": "", "والدنيا": "", "بالدنيا": "", "الربا": "", "هداهم": "", "اشتراه": "",
+ALIF_WORDS = {"الدنيا": "", "والدنيا": "", "بالدنيا": "", "الربا": "", "الربواا": "", "والربواا": "", "بسيماهم": "", "سيماهم": "",
               "خطاياكم": "k", "مرضات": "k", "مرضاة": "k", "فأحياكم": "k", "أحياكم": "k", "فأحيا": "k", "أحياهم": "k", "هداي": "dk"}
 
 def imala(words, i, nxt):
     b = bare(words[i])
     if b in ALIF_WORDS: return ALIF_WORDS[b]
-    if re.search(r"ى(ه|هم|هما|ها|ك|كم|نا|ني)$", b): return ""      # هُدَىهُمْ، اشْتَرَىهُ: a pronoun does not block imala
+    if re.search(r"ى(ه|هم|هما|هن|ها|ك|كم|نا|ني)$", b): return ""      # هُدَىهُمْ، اشْتَرَىهُ: a pronoun does not block imala
     if not b.endswith("ى"): return None
     if b in NOT_IMALA or PREFIX.sub("", b) in NOT_IMALA: return None
     L = letters(words[i])
@@ -120,6 +125,7 @@ def main():
                 nxt_x = nxt if nxt is not None else (vw[nextkey][0] if nextkey in vw else None)   # idgham crosses ayah ends in wasl
                 for rule, fn, nx in (("mim", mim, nxt), ("idgham", idgham, nxt_x), ("imala", imala, nxt)):
                     r = fn(words, i, nx)
+                    if r is not None and rule == "idgham" and nxt is None and not r: r = "v"   # across two ayahs: only when reading on
                     if r is not None: rows.append([rule, i, r] if r else [rule, i])
                 r = naql_between(words, i, nxt)
                 if r is not None or naql_inside(w): rows.append(["naql", i])
