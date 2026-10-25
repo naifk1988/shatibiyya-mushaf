@@ -772,6 +772,7 @@ $("#btnUsul").onclick=async()=>{
   const cnt=r=>Object.values(UENT).reduce((a,l)=>a+l.filter(x=>x[0]===r&&(!st.rawi||uApplies(x))).length,0);
   let h=`<div class="panel"><p class="small">الأصول قواعد مطّردة تمسّ كلمات كثيرة، فهي طبقات تُظهرها عند الحاجة. يُخطّ تحت كلماتها بلون القاعدة${st.rawi?`، ويُعرض منها ما يخص <b>${esc(rawiName(st.rawi))}</b> مع قراءته فوق الكلمة`:""}، وتظهر قاعدتها في لوحة الآية.</p>
   <div class="uall"><button data-a="1">إظهار الكل</button><button data-a="0">إخفاء الكل</button></div>`;
+  ids.sort((x,y)=>(USUL[x].order||99)-(USUL[y].order||99));
   const groups=[...new Set(ids.map(r=>USUL[r].group||""))];
   groups.forEach(g=>{if(g)h+=`<h4>${esc(g)}</h4>`;h+=`<div class="blist">`;
     ids.filter(r=>(USUL[r].group||"")===g).forEach(r=>{const R=USUL[r],n=cnt(r);
