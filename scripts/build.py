@@ -15,6 +15,7 @@ FIELDS = ["bayt_no", "bayt_to", "bayt", "cue", "also", "all", "readings", "ramz"
 def load_raw():
     rows = []
     for f in sorted(glob.glob(os.path.join(RAW, "*.json"))):
+        if os.path.basename(f) == "matn_vocalized.json": continue
         try:
             data = json.load(open(f, encoding="utf-8"))
         except Exception as e:
@@ -26,6 +27,13 @@ def load_raw():
 
 def main():
     rows = load_raw()
+    # the vocalized matn (corrected from «متن الشاطبية», Khizana 7754) replaces al-Wafi's unvocalized bayt text
+    vf = os.path.join(RAW, "matn_vocalized.json")
+    voc = json.load(open(vf, encoding="utf-8")) if os.path.exists(vf) else {}
+    for r in rows:
+        nos = range(r["bayt_no"], (r.get("bayt_to") or r["bayt_no"]) + 1)
+        if voc and all(str(n) in voc for n in nos):
+            r["bayt"] = "\n".join(voc[str(n)] for n in nos)
     by_surah = defaultdict(lambda: defaultdict(list))
     bayts, problems = set(), []
     for r in rows:
