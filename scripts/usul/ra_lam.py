@@ -74,10 +74,16 @@ def lam_rows(w, nxt):
         return [flag]
     return []
 
+# farsh changes the ra for Warsh: read with jazm (sakin ra after kasra: tarqiq agreed, not a Warsh rule), or with ra instead of zay
+RA_NOT_WARSH = {("2:271", "ويكفر"), ("2:284", "فيغفر")}
+RA_FARSH_ADD = {("2:259", "ننشزها")}
+
 def detect(vw):
     out = []
     for key, words, i, nxt, _ in words_iter(vw):
         w = words[i]
+        if (key, bare(w)) in RA_FARSH_ADD: out.append((key, ["ra_warsh", i, "farsh"]))
+        if (key, bare(w)) in RA_NOT_WARSH: continue
         for f in ra_rows(w):
             out.append((key, ["ra_warsh", i, f] if f else ["ra_warsh", i]))
         for f in lam_rows(w, nxt):
