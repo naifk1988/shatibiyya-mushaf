@@ -276,7 +276,11 @@ details.full summary{cursor:pointer;padding:8px 12px;font-size:13px;font-weight:
 details.full p{margin:0;padding:2px 12px 12px;font-family:"Amiri",serif;font-size:16px;line-height:1.85}
 a.rep{display:inline-block;margin-top:10px;font-size:12px;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px}
 /* usul layer: a coloured line under the word */
-.u-mim{--ucol:#2c6fa3}.u-idgham{--ucol:#7a3e9d}.u-naql{--ucol:#b06a12}.u-imala{--ucol:#1f7a5a}
+:root{--u-mim:#2c6fa3;--u-idgham:#7a3e9d;--u-naql:#b06a12;--u-imala:#1f7a5a}
+.u-mim{--ucol:var(--u-mim)}.u-idgham{--ucol:var(--u-idgham)}.u-naql{--ucol:var(--u-naql)}.u-imala{--ucol:var(--u-imala)}
+.uwords{display:flex;flex-wrap:wrap;gap:6px 14px;margin:4px 0 8px}
+.uwords span{display:flex;flex-direction:column}.uwords b{font-family:var(--f-quran);font-size:24px;font-weight:400;line-height:1.5}
+.uwords small{font-size:11.5px;color:var(--ucol)}
 body.usul .w.u{box-shadow:inset 0 -.1em 0 var(--ucol)}
 .ubar{width:6px;align-self:stretch;border-radius:3px;background:var(--ucol);flex:none}
 .sech{font-size:13px;color:var(--ink-soft);margin:18px 2px 8px;font-weight:700}
@@ -453,10 +457,24 @@ const cardOn=e=>!st.rawi||!!rawiDiff(e);
 // usul occurrences for an ayah: [[ruleId, wordIndex], ...], limited to the layers switched on and to the chosen transmitter
 function usulFor(key){
   if(!st.usul.size||!USUL)return [];
-  return (UENT[key]||[]).filter(([r])=>st.usul.has(r)&&USUL[r]&&(!st.rawi||rawiUsul(r)));
+  return (UENT[key]||[]).filter(row=>st.usul.has(row[0])&&USUL[row[0]]&&(!st.rawi||uApplies(row)));
 }
-function rawiUsul(r){const v=USUL[r]&&USUL[r].q&&USUL[r].q[st.rawi];return v&&v!=="no"?v:null}
-const USUL_SIGN={mim:"صلة",idgham:"إدغام",naql:"نقل",imala:"إمالة"};
+// does this place of the rule belong to the chosen transmitter? (Warsh's taqlil and Abu Amr's partial imala are described in the card, not marked)
+function uApplies([r,,f]){
+  const v=USUL[r].q&&USUL[r].q[st.rawi];if(!v||v==="no")return false;
+  if(r==="mim")return v!=="before_hamza"||f==="h";
+  if(r==="imala"){if(v!=="yes")return false;if(f==="k")return ["abulharith","duri_k"].includes(st.rawi);if(f==="dk")return st.rawi==="duri_k";}
+  return true;
+}
+function uLabel([r,,f]){
+  const v=st.rawi&&USUL[r].q?USUL[r].q[st.rawi]:"";
+  if(r==="mim")return "صلة الميم"+(v==="both"?" (بخلف)":"");
+  if(r==="idgham")return f==="x"?"إخفاء (اختلاس)":"إدغام";
+  if(r==="naql")return "نقل";
+  if(r==="imala")return "إمالة"+(f==="w"?" وقفًا":"");
+  return "";
+}
+const UFLAG={h:"قبل همز القطع: ولورش أيضًا",x:"قبله ساكن صحيح: المأخوذ به الإخفاء (الاختلاس)",w:"وقفًا فقط: بعدها ساكن أو تنوين",k:"للكسائي وحده",dk:"للدوري عن الكسائي وحده"};
 function hasEntries(key,wi){return entriesFor(key).some(e=>covers(e,wi)&&cardOn(e))}
 function wordClass(key,wi){
   let c=hasEntries(key,wi)?" has":"";
@@ -467,9 +485,14 @@ function wordClass(key,wi){
 function markAttr(key,wi){
   if(!st.rawi)return "";
   const e=entriesFor(key).find(e=>covers(e,wi)&&rawiDiff(e));
-  if(e){const d=rawiDiff(e);return d.label?` data-m="${esc(d.label)}"`:""}
+  if(e){const d=rawiDiff(e);let lab=d.label;
+    // a card that covers several words: write over each word its own word from the reading
+    if(lab&&(e.also||e.w2!=null||/\s/.test(lab.replace(/\s*\(.*?\)/g,"")))){const word=(st.ayahWords[key]||[])[wi];const sk=skel(word);
+      const toks=d.r.map(r=>(r.w||"").replace(/\(.*?\)/g,"").split(/\s+/)).flat().filter(Boolean);
+      const t=toks.find(t=>skel(t)===sk)||toks.find(t=>skel(t).slice(0,3)===sk.slice(0,3))||toks.find(t=>sk.length>2&&skel(t).slice(-3)===sk.slice(-3));lab=t||(wi===e.w?lab:"")}
+    return lab?` data-m="${esc(lab)}"`:""}
   const u=usulFor(key).find(([,i])=>i===wi);
-  if(u){const v=rawiUsul(u[0]);return ` data-m="${v==="taqlil"?"تقليل":USUL_SIGN[u[0]]||""}${v==="both"?" (بخلف)":""}" data-mu="1"`}
+  if(u)return ` data-m="${esc(uLabel(u))}" data-mu="1" style="--ucol:var(--u-${u[0]})"`;
   return "";
 }
 function computeWordIdx(key,words){
@@ -489,7 +512,7 @@ async function render(){
       if(p!==st.page)return;clearTimeout(st.loadT);renderLive(pg,p);slideIn();prefetch(p);return}
     catch(e){st.mode="preview"}
   }
-  if(preview)await ensureSurahs(Object.keys(preview).filter(k=>preview[k].some(v=>v.p===p)).map(Number));
+  if(preview){const ss=Object.keys(preview).filter(k=>preview[k].some(v=>v.p===p)).map(Number);await Promise.all([ensureSurahs(ss),ensureUsul(ss)])}
   if(p!==st.page)return;clearTimeout(st.loadT);
   renderPreview(p);slideIn();
 }
@@ -652,12 +675,14 @@ function drawSheet(){
   if(sel>=0)requestAnimationFrame(()=>scrollToWord(sel));
 }
 function usulSection(usul,words){
-  const by={};usul.forEach(([r,i])=>(by[r]=by[r]||[]).push(i));
+  const by={};usul.forEach(row=>(by[row[0]]=by[row[0]]||[]).push(row));
   let h=`<h3 class="sech">من الأصول</h3>`;
   Object.keys(by).forEach(r=>{const R=USUL[r];if(!R)return;
-    h+=`<article class="wc uc u-${r}" data-rule="${r}"><div class="top"><span class="q">${by[r].map(i=>esc(words[i])).join(" · ")}</span><span class="bno">${esc(R.title)}</span></div>`;
-    h+=baytHTML((R.bayts||[]).map(b=>b.text).join("\n"),R.rz);
-    (R.readers||[]).length&&(h+=`<div class="rd">${R.readers.map(x=>`<div class="rrow"><span class="who">${esc(x.who)}</span><span class="rr">${esc(x.r)}</span></div>`).join("")}</div>`);
+    h+=`<article class="wc uc u-${r}" data-rule="${r}"><div class="top"><span class="bno">${esc(R.title)}</span></div>`;
+    h+=`<div class="uwords">${by[r].map(([,i,f])=>`<span><b>${esc(words[i])}</b>${f&&UFLAG[f]?`<small>${esc(UFLAG[f])}</small>`:""}</span>`).join("")}</div>`;
+    const B=R.bayts||[];h+=baytHTML(B.slice(0,2).map(b=>b.text).join("\n"),R.rz);
+    if(B.length>2)h+=`<details class="full"><summary>بقية أبيات الباب (${ar(B.length-2)})</summary>${baytHTML(B.slice(2).map(b=>b.text).join("\n"),R.rz)}</details>`;
+    (R.readings||[]).length&&(h+=`<div class="rd">${R.readings.map(x=>`<div class="rrow"><span class="who">${esc(x.who)}</span><span class="rr">${esc(x.r)}</span></div>`).join("")}</div>`);
     if(R.ma3na)h+=`<h3 class="lbl">المعنى</h3><p class="txt">${esc(R.ma3na)}</p>`;
     if(R.exceptions&&R.exceptions.length)h+=`<details class="full"><summary>المستثنى من القاعدة</summary><p>${R.exceptions.map(esc).join("<br>")}</p></details>`;
     h+=`<div class="src">${esc("الوافي للقاضي "+arLoc(R.wafi_loc||""))}${R.bayts&&R.bayts.length?` · البيت ${ar(R.bayts[0].no)}${R.bayts.length>1?"–"+ar(R.bayts[R.bayts.length-1].no):""}`:""}</div>`;
