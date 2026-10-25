@@ -303,6 +303,7 @@ body.usul .w.u{box-shadow:inset 0 -.1em 0 var(--ucol)}
 .howto{margin:0 0 6px;padding-inline-start:18px;font-size:13.5px;line-height:1.8}.howto b{color:var(--frame)}
 .uall{display:flex;gap:8px;margin:4px 0 10px}.uall button{padding:6px 14px;border-radius:999px;border:1px solid var(--line);font-size:13px;background:var(--paper-edge)}
 .bitem.zero{opacity:.5}.uwords small.ul{color:var(--khilaf);font-weight:600}
+.tayah .aw.uu{box-shadow:inset 0 -.08em 0 var(--frame)}
 </style>
 
 <div id="app">
@@ -456,9 +457,10 @@ function rawiDiff(e){
 }
 const cardOn=e=>!st.rawi||!!rawiDiff(e);
 // usul occurrences for an ayah: [[ruleId, wordIndex], ...], limited to the layers switched on and to the chosen transmitter
-function usulFor(key){
-  if(!st.usul.size||!USUL)return [];
-  return (UENT[key]||[]).filter(row=>st.usul.has(row[0])&&USUL[row[0]]&&(!st.rawi||uApplies(row)));
+// on the page: only the layers switched on; in the ayah panel (all=true): every rule, so the usul of a tapped ayah always show
+function usulFor(key,all){
+  if(!USUL||(!all&&!st.usul.size))return [];
+  return (UENT[key]||[]).filter(row=>(all||st.usul.has(row[0]))&&USUL[row[0]]&&(!st.rawi||uApplies(row)));
 }
 // generic rule cards: card.q / card.flags[f].q map a transmitter to the label written over the word; empty = not his
 function uQ([r,,f]){const C=USUL[r];return (f&&C.flags&&C.flags[f]&&C.flags[f].q)||C.q||{}}
@@ -618,7 +620,7 @@ function openAyah(key,sel){
   const [s,a]=key.split(":").map(Number);
   const words=st.ayahWords[key]||[];computeWordIdx(key,words);
   const cards=entriesFor(key).filter(cardOn).sort((x,y)=>(x.w<0?999:x.w)-(y.w<0?999:y.w)||x.bayt_no-y.bayt_no);
-  const usul=usulFor(key);
+  const usul=usulFor(key,true);
   sheetState={key,words,cards,usul,s,a,sel};
   drawSheet();openSheet();
 }
@@ -664,8 +666,8 @@ const arLoc=s=>ar(String(s||""));
 function drawSheet(){
   const {words,cards,s:sn,a,sel}=sheetState;
   $("#shTitle").innerHTML=`<small>القراءات السبع من طريق الشاطبية</small><span>سورة ${SURAHS[sn-1]} · الآية ${ar(a)}</span>`;
-  const {usul}=sheetState;const marked=new Set();words.forEach((w,i)=>{if(cards.some(e=>covers(e,i))||usul.some(([,j])=>j===i))marked.add(i)});
-  $("#shTop").innerHTML=`<div class="tayah">${words.map((w,i)=>`<span class="aw${marked.has(i)?" has":""}${i===sel?" sel":""}" data-i="${i}">${esc(w)}</span>`).join(" ")} <span class="an">﴿${ar(a)}﴾</span></div>`;
+  const {usul}=sheetState;const marked=new Set(),umarked=new Set();words.forEach((w,i)=>{if(cards.some(e=>covers(e,i)))marked.add(i);else if(usul.some(([,j])=>j===i))umarked.add(i)});
+  $("#shTop").innerHTML=`<div class="tayah">${words.map((w,i)=>`<span class="aw${marked.has(i)?" has":umarked.has(i)?" uu":""}${i===sel?" sel":""}" data-i="${i}">${esc(w)}</span>`).join(" ")} <span class="an">﴿${ar(a)}﴾</span></div>`;
   let h="";
   if(st.rawi)h+=`<p class="tnote rnote">المعروض: ما يخالف فيه <b>${esc(rawiName(st.rawi))}</b> حفصًا.</p>`;
   if(!cards.length&&!usul.length)h+=`<div class="empty">${st.rawi?`لا يخالف ${esc(rawiName(st.rawi))} حفصًا في فرش هذه الآية.`:"لا خلاف بين القراء السبعة في فرش هذه الآية من طريق الشاطبية."}${DATA.surahs_covered&&!DATA.surahs_covered.includes(sn)?"<br>(لم تُضَف هذه السورة بعد)":""}</div>`;
@@ -676,8 +678,8 @@ function drawSheet(){
 }
 function usulSection(usul,words){
   const by={};usul.forEach(row=>(by[row[0]]=by[row[0]]||[]).push(row));
-  let h=`<h3 class="sech">من الأصول</h3>`;
-  Object.keys(by).forEach(r=>{const R=USUL[r];if(!R)return;
+  let h=`<h3 class="sech">من الأصول</h3>${st.usul.size?"":`<p class="tnote">لتخطيط كلمات الأصول في الصفحة فعّلها من زر الطبقات أعلى الشاشة.</p>`}`;
+  Object.keys(by).sort((x,y)=>(USUL[x].order||99)-(USUL[y].order||99)).forEach(r=>{const R=USUL[r];if(!R)return;
     h+=`<article class="wc uc" style="--ucol:${esc(R.color||"var(--frame)")}" data-rule="${r}"><div class="top"><span class="bno">${esc(R.title)}</span></div>`;
     h+=`<div class="uwords">${by[r].map(row=>{const n=uNote(row),lab=st.rawi?uLabel(row):"";return `<span><b>${esc(words[row[1]])}</b>${lab?`<small class="ul">${esc(rawiName(st.rawi))}: ${esc(lab)}</small>`:""}${n?`<small>${esc(n)}</small>`:""}</span>`}).join("")}</div>`;
     const B=R.bayts||[];h+=baytHTML(B.slice(0,2).map(b=>b.text).join("\n"),R.rz);
