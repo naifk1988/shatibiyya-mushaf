@@ -37,7 +37,7 @@ def positions(w, key=None, i=None):
         if len(rest) == 1 and rest[0][0] == "ا": final = False                         # «شَيْئا»، «جُزْءا»: alif of tanwin
         zaid = any(z in b for z in ZAID_LETTER)
         tanwin_alif = len(rest) == 1 and rest[0][0] == "ا"
-        sakin = SUKUN in m or (not m and bool(rest) and not tanwin_alif)      # «فَادَّارَائتُمْ»؛ «جُزْءا» = جزءًا
+        sakin = SUKUN in m or (not m and "ارائت" in b)      # «فَادَّارَائتُمْ»؛ «جُزْءا» = جزءًا
         p_alif = p == "ا" and not pm
         p_sakin = (SUKUN in pm) or (p in "وي" and not pm)
         if sakin: f = "s"

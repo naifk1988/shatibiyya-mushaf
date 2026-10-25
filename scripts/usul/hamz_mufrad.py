@@ -13,7 +13,7 @@ SUSI_EXCEPT = ("أنبئهم",)
 def sakin_hamza(w):
     L = letters(w)
     for k, (ch, m) in enumerate(L):
-        if ch in HAMZAS and k > 0 and (SUKUN in m or (not m and k + 1 < len(L) and not (k + 2 == len(L) and L[k + 1][0] == "ا"))):
+        if ch in HAMZAS and k > 0 and (SUKUN in m or (not m and "ارائت" in bare(w))):     # «فَادَّارَائتُمْ» has no sukun in q4
             return k
     return None
 
