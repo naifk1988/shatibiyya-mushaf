@@ -54,6 +54,8 @@ YA_IDAFA = {("2:30", "إني"): "y1", ("2:33", "إني"): "y1", ("2:152", "فا�
 ZAWAID = {("2:186", "الداع"): "z1", ("2:197", "واتقون"): "z2"}
 
 def ends_madd(w):
+    b = bare(w)
+    if b.endswith("ربواا") or b == "يستحي": return True   # الرِّبَوٰٓا۟ / يَسْتَحْيِۦٓ (dropped dagger alif / small ya in this text)
     L = last_letter(w)
     if len(L) >= 2 and L[-1][0] == "ا" and SUKUN in L[-1][1]: L = L[:-1]   # الرِّبَوااْ
     return len(L) >= 2 and is_madd(L, len(L) - 1)
@@ -92,7 +94,7 @@ def badal(w):
             # hamza after a sound sakin in the same word (القرآن، مسئولا) — but the lam of ال (الآخرة) is naql, not excluded
             if not (L[j - 1][0] == "ل" and j >= 2 and L[j - 2][0] in "اٱ"): continue
         nx, nm = L[j + 1]
-        if not m and nx not in "اىوي":            # الْأخِرَةِ، الْأيَاتِ، لِأدَمَ = hamza + alif (ءا)
+        if not m and (nx not in "اىوي" or has_vowel(nm)):            # الْأخِرَةِ، الْأيَاتِ، لِأدَمَ = hamza + alif (ءا) dropped in this text
             return True
         if FATHA in m and not has_tanwin(m) and nx in "اى" and SUKUN not in nm and not has_tanwin(nm):
             if j + 2 < len(L) or nx == "ا":
